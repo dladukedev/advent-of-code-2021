@@ -101,8 +101,6 @@ fun parseInputToBoards(input: List<String>): List<Board> {
 }
 
 fun main() {
-    println(parseInputToBoards(inputBoards))
-    
     println("------------ PART 1 ------------")
     val result1 = getFinalScore(inputCalls, inputBoards)
     println("result: $result1")
