@@ -1,8 +1,6 @@
 package dec07
 
 import kotlin.math.abs
-import kotlin.math.roundToLong
-
 
 fun fuelCalc(subLocations: List<Int>): Long {
     val max = subLocations
