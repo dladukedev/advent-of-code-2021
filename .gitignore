@@ -87,3 +87,6 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+# Hide Input Files
+**/Input.kt
