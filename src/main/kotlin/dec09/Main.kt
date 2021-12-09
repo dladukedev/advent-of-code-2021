@@ -44,21 +44,19 @@ fun parseHeatMap(input: String): Heatmap {
 }
 
 fun getLowPoints(heatMap: Heatmap): List<HeatmapLocation> {
-    val points = mutableListOf<HeatmapLocation>()
-
-    (heatMap.points.indices).forEach { row ->
-        (heatMap.points.first().indices).forEach { col ->
+    return (heatMap.points.indices).flatMap { row ->
+        (heatMap.points.first().indices).map { col ->
             val point = heatMap[row, col]
 
             val adjacentPoints = heatMap.getAdjacentPoints(point)
 
             if (adjacentPoints.all { adjacentPoint -> adjacentPoint.value > point.value }) {
-                points.add(point)
+                point
+            } else {
+                null
             }
         }
-    }
-
-    return points
+    }.filterNotNull()
 }
 
 tailrec fun calculateBasinDepth(
@@ -66,22 +64,17 @@ tailrec fun calculateBasinDepth(
     locations: List<HeatmapLocation>,
     basin: HashSet<HeatmapLocation> = hashSetOf()
 ): HashSet<HeatmapLocation> {
-    val nextDepth = mutableListOf<HeatmapLocation>()
+    basin.addAll(locations)
 
-    locations.forEach { location ->
-        val adjacentPoints = heatMap.getAdjacentPoints(location)
-            .filter { !basin.contains(it) && it.value != 9 }
-
-        basin.add(location)
-        nextDepth.addAll(adjacentPoints)
-    }
+    val nextDepth = locations.flatMap { location ->
+        heatMap.getAdjacentPoints(location)
+    }.filter { !basin.contains(it) && it.value != 9 }
 
     return if (nextDepth.isEmpty()) {
         basin
     } else {
         calculateBasinDepth(heatMap, nextDepth, basin)
     }
-
 }
 
 fun calculateRiskLevel(input: String): Long {
