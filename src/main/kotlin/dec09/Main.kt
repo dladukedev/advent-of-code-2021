@@ -12,7 +12,7 @@ data class Heatmap(
     val points: List<List<Int>>
 ) {
     private fun getOrNull(row: Int, col: Int): HeatmapLocation? {
-        return  points.getOrNull(row)?.getOrNull(col)?.let {
+        return points.getOrNull(row)?.getOrNull(col)?.let {
             HeatmapLocation(row, col, it)
         }
     }
@@ -52,7 +52,7 @@ fun getLowPoints(heatMap: Heatmap): List<HeatmapLocation> {
 
             val adjacentPoints = heatMap.getAdjacentPoints(point)
 
-            if(adjacentPoints.all { adjacentPoint -> adjacentPoint.value > point.value }) {
+            if (adjacentPoints.all { adjacentPoint -> adjacentPoint.value > point.value }) {
                 points.add(point)
             }
         }
@@ -61,22 +61,22 @@ fun getLowPoints(heatMap: Heatmap): List<HeatmapLocation> {
     return points
 }
 
-tailrec fun calculateBasinDepth(heatMap: Heatmap, locations: List<HeatmapLocation>, basin: HashSet<HeatmapLocation> = hashSetOf()): HashSet<HeatmapLocation> {
+tailrec fun calculateBasinDepth(
+    heatMap: Heatmap,
+    locations: List<HeatmapLocation>,
+    basin: HashSet<HeatmapLocation> = hashSetOf()
+): HashSet<HeatmapLocation> {
     val nextDepth = mutableListOf<HeatmapLocation>()
 
-    locations.filter { it.value != 9 }.forEach { location ->
-        val adjacentPoints = heatMap.getAdjacentPoints(location).filter { !basin.contains(it) }
-        val higherAdjacentPoints = heatMap.getAdjacentPoints(location).filter {
-            it.value > location.value
-        }
+    locations.forEach { location ->
+        val adjacentPoints = heatMap.getAdjacentPoints(location)
+            .filter { !basin.contains(it) && it.value != 9 }
 
-        //if(higherAdjacentPoints.size == adjacentPoints.size) {
-            basin.add(location)
-            nextDepth.addAll(adjacentPoints)
-       // }
+        basin.add(location)
+        nextDepth.addAll(adjacentPoints)
     }
 
-    return if(nextDepth.isEmpty()) {
+    return if (nextDepth.isEmpty()) {
         basin
     } else {
         calculateBasinDepth(heatMap, nextDepth, basin)
@@ -93,42 +93,18 @@ fun calculateRiskLevel(input: String): Long {
 fun getLargestBasins(input: String): Long {
     val heatMap = parseHeatMap(input)
 
-    val basinPoints = getLowPoints(heatMap).map {
-        calculateBasinDepth(heatMap, listOf(it))
-    }.flatten().toHashSet()
-
-    // TODO VISUALIZE
-    (heatMap.points.indices).forEach { row ->
-        (heatMap.points.first().indices).forEach { col ->
-            val location = heatMap[row, col]
-            if (basinPoints.contains(location)) {
-                print("X")
-            } else {
-                print(location.value)
-            }
-        }
-        println()
-    }
-
-
     return getLowPoints(heatMap).map {
         calculateBasinDepth(heatMap, listOf(it))
     }
         .map { it.size.toLong() }
         .sorted()
         .takeLast(3)
-        .map {
-
-            println(it)
-            it
-        }
         .reduce { acc, basin ->
-            acc * basin }
-
-
+            acc * basin
+        }
 }
 
-    fun main() {
+fun main() {
     println("------------ PART 1 ------------")
     val result1 = calculateRiskLevel(input)
     println("result: $result1")
