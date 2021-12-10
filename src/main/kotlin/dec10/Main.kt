@@ -17,12 +17,11 @@ fun findFirstCorruptingCharacterInLine(line: String): Char? {
             stack.push(it)
         } else {
             val openingCharacter = stack.pop()
-            if(openingCharacter == '{' && it == '}'
-                || openingCharacter == '(' && it == ')'
-                || openingCharacter == '<' && it == '>'
-                || openingCharacter == '[' && it == ']'
+            if(openingCharacter == '{' && it != '}'
+                || openingCharacter == '(' && it != ')'
+                || openingCharacter == '<' && it != '>'
+                || openingCharacter == '[' && it != ']'
             ) {
-            } else {
                 return@findFirstCorruptingCharacterInLine it
             }
         }
