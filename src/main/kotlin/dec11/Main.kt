@@ -55,8 +55,6 @@ tailrec fun processRound(octopusGarden: OctopusGarden): OctopusGarden {
     }
     
     return if(octopusesToFlash.isNotEmpty()) {
-
-        // Do flashes
         octopusesToFlash.forEach { pair ->
             val adjacentOctopuses = octopusGarden.getAdjacentPoints(pair.key.first, pair.key.second)
             adjacentOctopuses.forEach { octopus ->
