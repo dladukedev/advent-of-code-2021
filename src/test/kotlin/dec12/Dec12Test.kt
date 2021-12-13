@@ -40,7 +40,7 @@ class Dec12Test {
         val expected = 36L
 
         // When
-        val actual = getResult2(input)
+        val actual = getPathCount(input, true)
 
         // Then
         Assert.assertEquals(expected, actual)
