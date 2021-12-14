@@ -71,7 +71,6 @@ fun main () {
     println("------------ PART 1 ------------")
     val result1 = calculateDifferenceBetweenMostAndLeastCommonDigit(inputStart, inputReplacements, 10)
     println("result: $result1")
-    // 2268 too high
 
     println("------------ PART 2 ------------")
     val result2 = calculateDifferenceBetweenMostAndLeastCommonDigit(inputStart, inputReplacements, 40)
