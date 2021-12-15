@@ -22,11 +22,10 @@ class Dec15Test {
         val expected = 40
 
         // When
-        //val actual = getRiskLevel(input) // getRiskLevel(input)
-        val actual2 = doWork(input) // getRiskLevel(input)
+        val actual = calculateRiskLevel(input)
 
         // Then
-        Assert.assertEquals(expected, actual2)
+        Assert.assertEquals(expected, actual)
     }
 
     @Test
@@ -44,12 +43,12 @@ class Dec15Test {
             1293138521
             2311944581
         """.trimIndent()
-        val expected = 315L
+        val expected = 315
 
         // When
-        //val actual = getRiskLevel2(input) // getRiskLevel(input)
+        val actual = calculateRiskLevelForExpandedGrid(input)
 
         // Then
-        //Assert.assertEquals(expected, actual)
+        Assert.assertEquals(expected, actual)
     }
 }

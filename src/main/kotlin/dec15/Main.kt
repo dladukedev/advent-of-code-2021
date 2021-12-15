@@ -95,7 +95,7 @@ fun calculateRiskLevel(input: String): Int {
     return shortest(grid)
 }
 
-fun calculateRiskLevelForLargeGrid(input: String): Int {
+fun calculateRiskLevelForExpandedGrid(input: String): Int {
     val grid = getBigGrid(input)
     return shortest(grid)
 }
@@ -106,6 +106,6 @@ fun main() {
     println("result: $result1")
 
     println("------------ PART 2 ------------")
-    val result2 = calculateRiskLevelForLargeGrid(input)
+    val result2 = calculateRiskLevelForExpandedGrid(input)
     println("result: $result2")
 }
