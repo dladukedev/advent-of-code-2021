@@ -1,6 +1,5 @@
 package dec20
 
-import dec18.parseSnailNumber
 import org.junit.Assert
 import org.junit.Test
 
