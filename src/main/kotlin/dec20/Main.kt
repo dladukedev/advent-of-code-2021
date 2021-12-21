@@ -16,9 +16,9 @@ data class EnhancementAlgorithm(
 data class Image(
     val pixels: List<List<LightStatus>>,
 ) {
-    private fun tryGetPixel(row: Int, col: Int, count: Int): LightStatus {
+    private fun tryGetPixel(row: Int, col: Int, count: Int, valueFlips: Boolean): LightStatus {
         if(row < 0 || row >= pixels.size || col < 0 || col >= pixels.first().size) {
-            return if(count % 2 == 0) {
+            return if(count % 2 == 0 || !valueFlips) {
                 LightStatus.DARK
             } else {
                 LightStatus.LIT
@@ -28,24 +28,24 @@ data class Image(
         return pixels[row][col]
     }
 
-    fun getSiblings(row: Int, col: Int, count: Int): List<LightStatus> {
+    fun getSiblings(row: Int, col: Int, count: Int, valueFlips: Boolean): List<LightStatus> {
         return listOf(
-            tryGetPixel(row - 1, col - 1, count),
-            tryGetPixel(row - 1, col, count),
-            tryGetPixel(row - 1, col + 1, count),
+            tryGetPixel(row - 1, col - 1, count, valueFlips),
+            tryGetPixel(row - 1, col, count, valueFlips),
+            tryGetPixel(row - 1, col + 1, count, valueFlips),
 
-            tryGetPixel(row, col - 1, count),
-            tryGetPixel(row, col, count),
-            tryGetPixel(row, col + 1, count),
+            tryGetPixel(row, col - 1, count, valueFlips),
+            tryGetPixel(row, col, count, valueFlips),
+            tryGetPixel(row, col + 1, count, valueFlips),
 
-            tryGetPixel(row + 1, col - 1, count),
-            tryGetPixel(row + 1, col, count),
-            tryGetPixel(row + 1, col + 1, count),
+            tryGetPixel(row + 1, col - 1, count, valueFlips),
+            tryGetPixel(row + 1, col, count, valueFlips),
+            tryGetPixel(row + 1, col + 1, count, valueFlips),
         )
     }
 
-    fun expanded(count: Int): Image {
-        val outerStatus = if(count % 2 == 0) {
+    fun expanded(count: Int, valueFlips: Boolean): Image {
+        val outerStatus = if(count % 2 == 0 || !valueFlips) {
             LightStatus.DARK
         } else {
             LightStatus.LIT
@@ -105,12 +105,12 @@ fun parseImage(input: String): Image {
     return Image(pixels)
 }
 
-fun enhanceImage(image: Image, algorithm: EnhancementAlgorithm, count: Int): Image {
-    val imageToEnhance = image.expanded(count)
+fun enhanceImage(image: Image, algorithm: EnhancementAlgorithm, count: Int, valueFlips: Boolean): Image {
+    val imageToEnhance = image.expanded(count, valueFlips)
 
     val enhancedPixels = imageToEnhance.pixels.indices.map { row ->
         imageToEnhance.pixels.first().indices.map { col ->
-            val newPoint = imageToEnhance.getSiblings(row, col, count)
+            val newPoint = imageToEnhance.getSiblings(row, col, count, valueFlips)
                 .joinToString("") { when(it) {
                     LightStatus.LIT -> "1"
                     LightStatus.DARK -> "0"
@@ -127,8 +127,10 @@ fun getLitPixelsAfterEnhancements(input: String, enhancementCount: Int): Int {
     val algorithm = parseAlgorithm(input)
     val image = parseImage(input)
 
+    val valueFlips = algorithm.algorithm["000000000"] == LightStatus.LIT
+
     val finalImage = (0 until enhancementCount).fold(image) { currentImage, iteration ->
-        enhanceImage(currentImage, algorithm, iteration)
+        enhanceImage(currentImage, algorithm, iteration, valueFlips)
     }
 
     return finalImage.pixels.flatten().count { it == LightStatus.LIT }

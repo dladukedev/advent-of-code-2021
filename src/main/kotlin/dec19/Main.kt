@@ -157,13 +157,17 @@ fun getAllScannersRelativeTo0(scanners: List<Scanner>): List<Scanner> {
     return map.values.toList()
 }
 
-fun getDistictBeaconCount(scanners: List<Scanner>): Int {
-    return scanners.flatMap { it.beaconLocations }.distinct().count()
+fun getDistictBeaconCount(input: String): Int {
+    val scanners = parseInput(input)
+    val relativeScanners = getAllScannersRelativeTo0(scanners)
+    return relativeScanners.flatMap { it.beaconLocations }.distinct().count()
 }
 
-fun getMaxManhattanDistance(scanners: List<Scanner>): Int {
-    return scanners.flatMap { scanner1 ->
-        scanners.map { scanner2 ->
+fun getMaxManhattanDistance(input: String): Int {
+    val scanners = parseInput(input)
+    val relativeScanners = getAllScannersRelativeTo0(scanners)
+    return relativeScanners.flatMap { scanner1 ->
+        relativeScanners.map { scanner2 ->
             abs(scanner2.positionRelativeTo00.x - scanner1.positionRelativeTo00.x) +
                     abs(scanner2.positionRelativeTo00.y - scanner1.positionRelativeTo00.y) +
                     abs(scanner2.positionRelativeTo00.z - scanner1.positionRelativeTo00.z)
@@ -172,14 +176,11 @@ fun getMaxManhattanDistance(scanners: List<Scanner>): Int {
 }
 
 fun main() {
-    val scanners = parseInput(input)
-    val relativeScanners = getAllScannersRelativeTo0(scanners)
-
     println("------------ PART 1 ------------")
-    val result1 = getDistictBeaconCount(relativeScanners)
+    val result1 = getDistictBeaconCount(input)
     println("result: $result1")
 
     println("------------ PART 2 ------------")
-    val result2 = getMaxManhattanDistance(relativeScanners)
+    val result2 = getMaxManhattanDistance(input)
     println("result: $result2")
 }
