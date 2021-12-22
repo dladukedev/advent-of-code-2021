@@ -104,16 +104,21 @@ data class QGameResult(
     val p2Wins: Long,
 )
 
-object CachedResults {
-    val cache = mutableMapOf<QGameState, QGameResult>()
+
+// From - https://jorgecastillo.dev/kotlin-purity-and-function-memoization
+class Memoize1<in T, out R>(val f: (T) -> R) : (T) -> R {
+    private val values = mutableMapOf<T, R>()
+    override fun invoke(x: T): R {
+        return values.getOrPut(x, { f(x) })
+    }
 }
+
+fun <T, R> ((T) -> R).memoize(): (T) -> R = Memoize1(this)
+
+val cachedPlay2 = { state: QGameState -> play2(state) }.memoize()
 
 // Help from - https://www.reddit.com/r/adventofcode/comments/rl6p8y/comment/hpe8pmy/?utm_source=share&utm_medium=web2x&context=3
 fun play2(state: QGameState): QGameResult {
-    CachedResults.cache[state]?.let {
-        return it
-    }
-
     val moves = mutableMapOf(
         3 to 1,
         4 to 3,
@@ -139,7 +144,7 @@ fun play2(state: QGameState): QGameResult {
             state.score2,
             state.score1 + newPos1
         )
-        val result = play2(updatedState)
+        val result = cachedPlay2(updatedState)
         wins1 +=  result.p2Wins * move.value
         wins2 += result.p1Wins * move.value
 
