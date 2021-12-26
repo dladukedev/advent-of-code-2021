@@ -1,6 +1,5 @@
 package dec22
 
-
 enum class Status { ON, OFF }
 
 data class Cube(
@@ -69,7 +68,7 @@ fun getSplitCubes(existing: Cube, new: Cube): List<Cube> {
     return cubes
 }
 
-fun parseInput(input: String): List<Instruction> {
+fun parseInput(input: String, boundingBox: Boolean = false): List<Instruction> {
     return input.lines()
         .map { line ->
             val (instruction, coordinates) = line.split(" ")
@@ -95,17 +94,28 @@ fun parseInput(input: String): List<Instruction> {
             )
 
             Instruction(cube)
+        }.filter { instruction ->
+            !boundingBox || (
+                    instruction.cube.x1 >= -50 && instruction.cube.x2 <= 50 &&
+                    instruction.cube.y1 >= -50 && instruction.cube.y2 <= 50 &&
+                    instruction.cube.z1 >= -50 && instruction.cube.z2 <= 50
+                    )
         }
 }
 
-fun runInstructions(input: String, drop: Int): Long {
-    return parseInput(input).dropLast(drop).fold(listOf<Cube>()) { cubes, instruction ->
+fun runInstructions(input: String, boundingBox: Boolean = false): Long {
+    return parseInput(input, boundingBox).fold(listOf<Cube>()) { cubes, instruction ->
         cubes.flatMap { getSplitCubes(it, instruction.cube) } + listOf(instruction.cube)
     }.filter { it.status == Status.ON }.sumOf { it.pointCountInCube }
 }
 
 fun main() {
-    println(runInstructions(input, 2))
-    println(runInstructions(input, 0))
+    println("------------ PART 1 ------------")
+    val result1 = runInstructions(input, true)
+    println("result: $result1")
+
+    println("------------ PART 2 ------------")
+    val result2 = runInstructions(input)
+    println("result: $result2")
 
 }
